@@ -6,8 +6,10 @@ import org.nobleson.banksystem.services.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -35,6 +37,16 @@ public class AccountController {
         return new ResponseEntity<>(accountService.createAccount(account), HttpStatus.CREATED);
     }
 
+    @Transactional
+    @PostMapping("/addmore")
+    public List<Account> createAccounts(List<Account> accounts) {
+        for (Account account : accounts) {
+            if (account.getAccountBalance() == null || account.getAccountBalance().compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Account balance must be non-negative for all accounts");
+            }
+        }
+        return accountService.createAccounts(accounts);
+    }
     @PutMapping("/edit")
         public ResponseEntity<Account> editAccount(@RequestBody Account account) {
         return new ResponseEntity<>(accountService.updateAccount(account), HttpStatus.OK);

@@ -33,6 +33,17 @@ public class AccountService {
         }
         return accountRepository.save(account);
     }
+
+    @Transactional
+    public List<Account> createAccounts(List<Account> accounts) {
+
+        if (accounts == null || accounts.isEmpty()) {
+            throw new IllegalArgumentException("List of accounts must not be null or empty");
+        }
+        return accountRepository.saveAll(accounts);
+    }
+
+
     /**
      * This method is used to query an account based on the account ID
      * SELECT * FROM ACCOUNT WHERE ACCOUNTID = {accountID}
